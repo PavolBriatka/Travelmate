@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2196F3</color>
+    <color name="colorPrimaryDark">#1976D2</color>
+    <color name="colorAccent">#FF5252</color>
+
+    <color name="colorBackground">#FFFFFF</color>
+    <color name="colorItemBackground">#1A757575</color>
+    <color name="colorBackgroundWidget">#f5f5f5</color>
+    <color name="colorBackgroundTransparent">#662196F3</color>
+
+    <color name="colorFont">#757575</color>
+    <color name="colorDarkFont">#212121</color>
+
+    <color name="placeholderBackground">#BDBDBD</color>
+
+    <color name="blackSemiTransparent">#80000000</color>
+
+
+</resources>

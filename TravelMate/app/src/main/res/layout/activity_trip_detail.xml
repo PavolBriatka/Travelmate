@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:orientation="vertical"
+    android:padding="@dimen/default_margin">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="@dimen/double_default_margin"
+        android:alpha="0.15"
+        android:contentDescription="@string/trip_detail_background_cd"
+        android:src="@drawable/crossroad" />
+
+    <EditText
+        android:id="@+id/change_name_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/enter_new_trip_name"
+        android:inputType="textCapSentences"
+        android:textCursorDrawable="@color/colorPrimary"
+        android:visibility="gone"
+        android:maxLength="30"
+        app:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/colorFont"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/detail_trip_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/change_name_edit_text"
+        android:scrollbars="vertical" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/double_default_margin"
+        android:background="@drawable/edit_trip_menu_border"
+        android:orientation="horizontal"
+        android:padding="@dimen/double_default_margin">
+
+        <ImageView
+            android:id="@+id/step_back_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/edit_bar_step_back"
+            android:src="@drawable/baseline_undo_white_24" />
+
+        <ImageView
+            android:id="@+id/trip_save_changes_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/edit_bar_save_changes"
+            android:src="@drawable/ic_save_24dp" />
+
+        <ImageView
+            android:id="@+id/empty_helper_view"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@null" />
+
+        <ImageView
+            android:id="@+id/change_trip_name_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/edit_bar_change_trip_name"
+            android:src="@drawable/ic_edit_24dp" />
+
+        <ImageView
+            android:id="@+id/add_destination_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/edit_bar_add_destination"
+            android:src="@drawable/ic_add_location_24dp" />
+
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/show_on_map_button"
+        android:layout_width="@dimen/fifty_six_dp_dimen"
+        android:layout_height="@dimen/fifty_six_dp_dimen"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="48dp"
+        android:background="@drawable/map_button_background"
+        android:src="@drawable/ic_map_24dp"
+        android:visibility="visible"
+        android:contentDescription="@string/edit_bar_show_trip_on_map_cd"/>
+
+    <ImageView
+        android:layout_width="66dp"
+        android:layout_height="66dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="43dp"
+        android:background="@drawable/map_button_background"
+        android:contentDescription="@null"
+        android:gravity="center" />
+
+</RelativeLayout>

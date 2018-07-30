@@ -1,0 +1,86 @@
+<resources>
+    <string name="app_name">TravelMate</string>
+
+    <string name="delete_img_error_message">The file path does not exist anymore.</string>
+    <string name="new_fav_place_added">A new place has been saved.</string>
+    <string name="enter_fav_place_name_hint">Please, name this place.</string>
+    <string name="save_place_empty_name_view">Please, enter a custom name for this place.</string>
+    <string name="no_picture_to_show">There is no photo to show.</string>
+
+    <string name="add_new_place_fab">Add new place button</string>
+    <string name="place_photo_thumbnail_cd">Place photo thumbnail</string>
+    <string name="take_photo_icon_cd">Take picture button</string>
+    <string name="save_place_icon_cd">Save place button</string>
+    <string name="place_detail_photo_cd">Place detail photo</string>
+    <string name="ferris_wheel_decoration_cd">Ferris wheel decoration image</string>
+    <string name="place_detail_fullscreen_image_cd">Place photo fullscreen</string>
+    <string name="share_location_icon_cd">Share location button</string>
+    <string name="show_fullscreen_icon_cd">Show fullscreen button</string>
+
+    <string name="take_photo_tv">Take a picture</string>
+    <string name="save_location_tv">Save the location</string>
+    <string name="place_detail_share_location_button_tv">Share the location</string>
+    <string name="place_detail_photo_fullscreen_button_tv">Fullscreen picture</string>
+
+    <string name="trip_name_et_hint">Please, enter the trip name.</string>
+    <string name="no_changes_message">No changes to undo.</string>
+
+    <string name="trip_name_widget_key">trip_name</string>
+    <string name="trip_data_widget_key">trip_data</string>
+    <string name="trip_id_widget_key">trip_id</string>
+
+    <string name="widget_default_trip_name">TravelMate</string>
+    <string name="widget_default_list_item_values">Empty list</string>
+    <string name="widget_default_trip_id">1</string>
+
+    <string name="widget_empty_check_box">Widget empty destination checkbox</string>
+    <string name="widget_background_image">Widget background image</string>
+
+    <string name="empty_view_text">The list is currently empty.</string>
+
+
+
+    <string name="trip_list_check_box_cd">Trip detail destination check box</string>
+    <string name="trip_cancel_button_cd">Cancel trip button</string>
+    <string name="place_delete_button_cd">Delete place button</string>
+    <string name="add_new_trip_background_cd">Add new trip background picture</string>
+    <string name="save_new_trip_fab_cd">Save the trip button</string>
+    <string name="add_new_trip_fab">Add new trip button</string>
+    <string name="trip_detail_background_cd">Trip detail background picture</string>
+    <string name="main_activity_background_cd">Main activity background picture</string>
+
+    <string name="delete_item_toast_message">Please, perform a long click if you wish to delete the item.</string>
+
+    <string name="create_trip_empty_list_msg">The list is empty, please add at least one destination.</string>
+    <string name="create_trip_empty_name_view">Please, enter a name for this trip - e.g. Scotland 2018.</string>
+    <string name="create_trip_success_msg">A new trip has been successfully created.</string>
+    <string name="create_trip_empty_view">How to create a trip? It\'s simple: \n\n
+    1. Enter a custom name for your trip. \n\n
+    2. Click on the search bar and write  the name of a destination.\n\n
+    3. Once you see the destination in the list of suggestions, just click on it and it will be added to the list. You can add as many destinations as you wish.\n\n
+    4. If you\'d like to delete a destination from the list, swipe it simply to the left or right.\n\n
+    5. When the list of destinations is complete, click on the red \"Save\" button. </string>
+
+    <string name="enter_new_trip_name">Please, enter a new trip name.</string>
+
+    <string name="edit_bar_step_back">Step back</string>
+    <string name="edit_bar_save_changes">Save changes</string>
+    <string name="edit_bar_change_trip_name">Change name</string>
+    <string name="edit_bar_add_destination">Add destination</string>
+    <string name="edit_bar_show_trip_on_map_cd">Show trip destinations on map</string>
+
+    <string name="edit_trip_empty_save_array">The list must contain at least one destination.</string>
+    <string name="edit_trip_empty_new_name_string">The title must contain at least one character.</string>
+
+    <string name="changes_saved_msg">The changes have been saved.</string>
+    <string name="trip_list_empty_state">No trips planned? No worries, just click on the red button and
+        start planning your next adventure!</string>
+    <string name="fav_places_empty_state">The world is full of amazing locations that await you to discover them.
+    For starters, you can add your home to the list - I\'m sure it\'s one of your favourite places!</string>
+
+    <string name="permission_granted">Thank you for the permission.</string>
+    <string name="permission_not_granted">The application needs access to your location.</string>
+
+    <string name="tab_one_text">Planned Trips</string>
+    <string name="tab_two_text">Favourite Locations</string>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:initialKeyguardLayout="@layout/trip_widget_list_view"
+    android:initialLayout="@layout/trip_widget_list_view"
+    android:minHeight="120dp"
+    android:minWidth="180dp"
+    android:previewImage="@drawable/compasswidget"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="3600000"
+    android:widgetCategory="home_screen" />

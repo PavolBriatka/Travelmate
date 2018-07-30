@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/fav_place_detail_app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/fav_place_detail_appbar_height">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/fav_place_detail_appbar_height">
+
+            <ImageView
+                android:id="@+id/place_detail_photo"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/fav_place_detail_appbar_height"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/place_detail_photo_cd"
+                android:scaleType="centerCrop" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/fav_place_detail_appbar_height"
+                android:background="@drawable/fav_place_detail_gradient" />
+
+            <android.support.v7.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/fifty_six_dp_dimen"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="@dimen/double_default_margin">
+
+                <TextView
+                    android:id="@+id/place_detail_name"
+                    style="@style/placeDetailNameStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="Custom place name" />
+
+            </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:alpha="0.2"
+        android:contentDescription="@string/ferris_wheel_decoration_cd"
+        android:src="@drawable/ferriswheel" />
+
+    <LinearLayout
+        android:id="@+id/place_detail_content_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/four_dp_dimen"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:cardElevation="@dimen/four_dp_dimen">
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/map_fav_place"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+
+        </android.support.v7.widget.CardView>
+
+        <LinearLayout
+            android:id="@+id/share_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/default_margin"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:layout_marginLeft="@dimen/default_margin"
+            android:layout_marginRight="@dimen/default_margin"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginTop="@dimen/double_default_margin"
+            android:background="@drawable/add_fav_place_button_border"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/add_fav_place_button_icon_border"
+                android:contentDescription="@string/share_location_icon_cd"
+                android:padding="12dp"
+                android:src="@drawable/ic_share_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingBottom="@dimen/default_margin"
+                android:paddingEnd="@dimen/double_default_margin"
+                android:paddingLeft="@dimen/four_dp_dimen"
+                android:paddingRight="@dimen/double_default_margin"
+                android:paddingStart="@dimen/four_dp_dimen"
+                android:paddingTop="@dimen/default_margin"
+                android:text="@string/place_detail_share_location_button_tv"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/fullscreen_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/default_margin"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:layout_marginLeft="@dimen/default_margin"
+            android:layout_marginRight="@dimen/default_margin"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginTop="@dimen/double_default_margin"
+            android:background="@drawable/add_fav_place_button_border"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/add_fav_place_button_icon_border"
+                android:contentDescription="@string/show_fullscreen_icon_cd"
+                android:padding="12dp"
+                android:src="@drawable/ic_fullscreen_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingBottom="@dimen/default_margin"
+                android:paddingEnd="@dimen/double_default_margin"
+                android:paddingLeft="@dimen/four_dp_dimen"
+                android:paddingRight="@dimen/double_default_margin"
+                android:paddingStart="@dimen/four_dp_dimen"
+                android:paddingTop="@dimen/default_margin"
+                android:text="@string/place_detail_photo_fullscreen_button_tv"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/place_detail_fullscreen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:background="@color/blackSemiTransparent"
+        android:contentDescription="@string/place_detail_fullscreen_image_cd"
+        android:padding="@dimen/default_margin"
+        android:visibility="gone" />
+
+</android.support.design.widget.CoordinatorLayout>

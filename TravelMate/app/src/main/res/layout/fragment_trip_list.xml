@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.TripListFragment">
+
+    <TextView
+        android:id="@+id/trip_list_empty_state"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="@dimen/double_default_margin"
+        android:text="@string/trip_list_empty_state"
+        android:textColor="@color/colorDarkFont"
+        android:textSize="16sp" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/trip_list_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/default_margin"
+        android:scrollbars="vertical" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_add_new_trip"
+        style="@style/fabStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:elevation="@dimen/fab_elevation"
+        app:pressedTranslationZ="@dimen/fab_press_translation_z"
+        app:srcCompat="@drawable/baseline_add_white_24"
+        android:contentDescription="@string/add_new_trip_fab"/>
+
+    <com.github.ybq.android.spinkit.SpinKitView
+        android:id="@+id/spin_kit_trip_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/SpinKitView.Large.Circle"
+        app:SpinKit_Color="@color/colorAccent"
+        android:layout_centerInParent="true"/>
+
+</RelativeLayout>
