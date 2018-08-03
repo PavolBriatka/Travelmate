@@ -45,10 +45,10 @@ class TripListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactor
 
         tripDataList.clear();
 
+
         Type type = new TypeToken<ArrayList<CustomPlace>>() {
         }.getType();
         Gson gson = new Gson();
-
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         tripData = sharedPreferences.getString(
                 mContext.getString(R.string.trip_data_widget_key),

@@ -71,7 +71,8 @@ public class TripOnMapActivity extends AppCompatActivity {
                         Manifest.permission.ACCESS_FINE_LOCATION);
 
                 if(permissionCheck == PackageManager.PERMISSION_GRANTED) {
-
+                    googleMap.setMyLocationEnabled(true);
+                    googleMap.getUiSettings().setMyLocationButtonEnabled(true);
                     for (int i = 0; i < dataList.size(); i++) {
                         destinationMap.addMarker(new MarkerOptions()
                                 .position(dataList.get(i).placeLatLng)

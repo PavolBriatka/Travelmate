@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 
 import com.briatka.pavol.favouriteplaces.R;
+import com.briatka.pavol.favouriteplaces.activities.TripOnMapActivity;
 import com.briatka.pavol.favouriteplaces.tripintentservice.TripIntentService;
 
 /**
@@ -67,8 +68,22 @@ public class TripWidgetProvider extends AppWidgetProvider {
                 context.getString(R.string.widget_default_trip_name));
         String tripId = sharedPreferences.getString(context.getString(R.string.trip_id_widget_key),
                 context.getString(R.string.widget_default_trip_id));
+        String tripData = sharedPreferences.getString(
+                context.getString(R.string.trip_data_widget_key),
+                context.getString(R.string.widget_default_list_item_values));
+
+        Intent openMapFromWidget = new Intent(context, TripOnMapActivity.class);
+        openMapFromWidget.putExtra(TripOnMapActivity.MAP_COORDINATES_KEY,tripData);
+        openMapFromWidget.putExtra(TripOnMapActivity.TRIP_NAME_KEY,tripName);
+
+        PendingIntent openMapPendingIntent = PendingIntent.getActivity(context,
+                0,
+                openMapFromWidget,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
 
         remoteViews.setTextViewText(R.id.widget_trip_name, tripName);
+        remoteViews.setOnClickPendingIntent(R.id.widget_trip_name,openMapPendingIntent);
 
         Intent intent = new Intent(context, TripWidgetService.class);
         remoteViews.setRemoteAdapter(R.id.widget_list_view, intent);
@@ -88,5 +103,6 @@ public class TripWidgetProvider extends AppWidgetProvider {
 
         return remoteViews;
     }
+
 }
 

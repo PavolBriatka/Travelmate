@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,7 +101,6 @@ public class TripListAdapter extends RecyclerView.Adapter<TripListAdapter.ViewHo
 
     public void setTripListData(ArrayList<CustomPlace> passedList) {
         this.mPlaceList = passedList;
-        Log.e("size2", String.valueOf(mPlaceList.size()));
         notifyDataSetChanged();
     }
 
