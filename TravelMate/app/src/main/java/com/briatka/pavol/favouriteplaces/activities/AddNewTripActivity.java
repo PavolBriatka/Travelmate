@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -68,7 +67,10 @@ public class AddNewTripActivity extends AppCompatActivity {
 
             @Override
             public void onError(Status status) {
-                Log.e("Error msg", "An error occurred: " + status);
+                Toast.makeText(AddNewTripActivity.this,
+                        "An error occurred, please try again",
+                        Toast.LENGTH_SHORT)
+                        .show();
             }
         });
 

@@ -93,7 +93,6 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="48dp"
-        android:background="@drawable/map_button_background"
         android:src="@drawable/ic_map_24dp"
         android:visibility="visible"
         android:contentDescription="@string/edit_bar_show_trip_on_map_cd"/>

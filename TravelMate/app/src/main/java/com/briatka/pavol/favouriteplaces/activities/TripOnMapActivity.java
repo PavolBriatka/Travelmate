@@ -73,12 +73,17 @@ public class TripOnMapActivity extends AppCompatActivity {
                 if(permissionCheck == PackageManager.PERMISSION_GRANTED) {
                     googleMap.setMyLocationEnabled(true);
                     googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-                    for (int i = 0; i < dataList.size(); i++) {
-                        destinationMap.addMarker(new MarkerOptions()
-                                .position(dataList.get(i).placeLatLng)
-                                .title(dataList.get(i).placeName));
+                    if(dataList.size() > 1) {
+                        for (int i = 1; i < dataList.size(); i++) {
+                            destinationMap.addMarker(new MarkerOptions()
+                                    .position(dataList.get(i).placeLatLng)
+                                    .title(dataList.get(i).placeName));
+                        }
                     }
 
+                    destinationMap.addMarker(new MarkerOptions()
+                    .position(dataList.get(0).placeLatLng)
+                    .title(dataList.get(0).placeName)).showInfoWindow();
                     destinationMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                             dataList.get(0).placeLatLng,7 ));
                 }

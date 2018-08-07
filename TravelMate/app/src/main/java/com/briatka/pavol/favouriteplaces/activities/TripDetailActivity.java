@@ -14,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -333,7 +332,9 @@ public class TripDetailActivity extends AppCompatActivity {
 
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
-                Log.e("Error:", status.getStatusMessage());
+                Toast.makeText(TripDetailActivity.this,
+                        "An error occurred:" + status.getStatusMessage(),
+                        Toast.LENGTH_SHORT).show();
             }
         }
 

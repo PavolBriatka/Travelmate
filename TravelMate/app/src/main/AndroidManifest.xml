@@ -87,7 +87,8 @@
                 android:value=".activities.MainActivity" />
         </activity>
 
-        <activity android:name=".activities.TripOnMapActivity" />
+        <activity android:name=".activities.TripOnMapActivity"
+            android:screenOrientation="portrait"/>
 
         <receiver android:name=".widget.TripWidgetProvider">
             <intent-filter>

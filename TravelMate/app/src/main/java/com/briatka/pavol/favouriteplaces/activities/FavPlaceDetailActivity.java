@@ -13,6 +13,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -79,6 +80,15 @@ public class FavPlaceDetailActivity extends AppCompatActivity {
             photoArray = savedInstanceState.getByteArray(PHOTO_ARRAY_KEY);
             byteArrayToBitmap(photoArray);
         }
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        float density = displayMetrics.density;
+        int height = displayMetrics.heightPixels;
+
+        int  heightDp = (int)(height / density);
+        favPlaceMap.setMinimumHeight(((heightDp - 249) / 2));
+
 
         if (isVisible) {
             isVisibleTrue();
