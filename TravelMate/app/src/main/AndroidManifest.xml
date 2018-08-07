@@ -107,4 +107,5 @@
         <service android:name=".tripintentservice.TripIntentService" />
     </application>
 
+    
 </manifest>
