@@ -30,6 +30,9 @@
     <style name="mainListsTextStyle">
         <item name="android:textColor">@color/colorFont</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:paddingTop">@dimen/double_default_margin</item>
+        <item name="android:paddingBottom">@dimen/double_default_margin</item>
+
     </style>
 
     <style name="fabStyle">
@@ -41,8 +44,6 @@
 
     <style name="mainListItemStyle">
         <item name="android:background">@color/colorItemBackground</item>
-        <item name="android:paddingTop">@dimen/double_default_margin</item>
-        <item name="android:paddingBottom">@dimen/double_default_margin</item>
         <item name="android:paddingLeft">@dimen/default_margin</item>
         <item name="android:paddingRight">@dimen/default_margin</item>
         <item name="android:layout_marginBottom">2dp</item>

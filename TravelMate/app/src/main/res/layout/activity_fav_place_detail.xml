@@ -55,6 +55,7 @@
         android:contentDescription="@string/ferris_wheel_decoration_cd"
         android:src="@drawable/ferriswheel" />
 
+
     <LinearLayout
         android:id="@+id/place_detail_content_linear_layout"
         android:layout_width="match_parent"
@@ -160,5 +161,7 @@
         android:contentDescription="@string/place_detail_fullscreen_image_cd"
         android:padding="@dimen/default_margin"
         android:visibility="gone" />
+
+
 
 </android.support.design.widget.CoordinatorLayout>

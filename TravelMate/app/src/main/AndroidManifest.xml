@@ -65,7 +65,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="{paste your API key}" />
+            android:value="AIzaSyCD4nO8Kq_PKulCeyOVkpx9p7dGixxAAoo" />
 
         <activity
             android:name=".activities.AddNewTripActivity"

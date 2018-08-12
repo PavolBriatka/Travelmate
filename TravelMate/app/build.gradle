@@ -3,10 +3,10 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         config {
-            keyAlias 'alias'
-            keyPassword 'password'
+            keyAlias 'Pavol_Briatka_Signature'
+            keyPassword 'EC142812'
             storeFile file("$rootDir/keystore.jks")
-            storePassword 'password'
+            storePassword 'EC1428128327'
         }
     }
     compileSdkVersion 27
@@ -14,7 +14,7 @@ android {
         applicationId "com.briatka.pavol.favouriteplaces"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 1
+        versionCode 3
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

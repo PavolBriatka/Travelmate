@@ -39,6 +39,7 @@ public class FavPlacesFragment extends Fragment implements LoaderManager.LoaderC
     private FavPlacesCursorAdapter adapter;
     final LoaderManager.LoaderCallbacks callbacks = this;
 
+
     @BindView(R.id.fav_places_recycler_view)
     RecyclerView recyclerView;
     @BindView(R.id.fab_add_new_place)
@@ -87,9 +88,9 @@ public class FavPlacesFragment extends Fragment implements LoaderManager.LoaderC
         addNewPlaceFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent openAddPlaceActivity = new Intent(getContext(), AddNewFavPlaceActivity.class);
                 startActivity(openAddPlaceActivity);
-
             }
         });
 
@@ -160,5 +161,7 @@ public class FavPlacesFragment extends Fragment implements LoaderManager.LoaderC
         adapter.swapCursor(null);
 
     }
+
+
 
 }

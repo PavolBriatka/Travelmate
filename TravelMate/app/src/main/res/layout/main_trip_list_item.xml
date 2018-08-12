@@ -29,6 +29,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:contentDescription="@string/trip_cancel_button_cd"
+        android:paddingTop="@dimen/double_default_margin"
+        android:paddingBottom="@dimen/double_default_margin"
         android:src="@drawable/outline_cancel_black_24" />
 
 </LinearLayout>

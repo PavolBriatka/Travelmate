@@ -64,7 +64,8 @@
                 android:maxLength="30"
                 android:textColor="@color/colorFont"
                 android:textCursorDrawable="@color/colorPrimary"
-                app:backgroundTint="@color/colorPrimary" />
+                app:backgroundTint="@color/colorPrimary"
+                android:paddingTop="@dimen/four_dp_dimen"/>
 
         </LinearLayout>
 
@@ -132,5 +133,13 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/map_current_position"
+        app:layout_anchorGravity="center"
+        android:visibility="gone"/>
 
 </android.support.design.widget.CoordinatorLayout>

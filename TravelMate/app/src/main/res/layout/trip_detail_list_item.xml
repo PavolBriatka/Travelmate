@@ -21,6 +21,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:contentDescription="@string/trip_list_check_box_cd"
+        android:paddingBottom="@dimen/double_default_margin"
+        android:paddingTop="@dimen/double_default_margin"
         android:src="@drawable/outline_check_box_outline_blank_black_24" />
 
 

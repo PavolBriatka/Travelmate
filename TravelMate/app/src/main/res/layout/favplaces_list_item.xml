@@ -12,13 +12,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="4"
-        tools:text="Castle in Scotland" />
+        tools:text="Castle in Scotland"
+        />
 
     <ImageView
         android:id="@+id/delete_place_img"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:paddingTop="@dimen/double_default_margin"
+        android:paddingBottom="@dimen/double_default_margin"
         android:contentDescription="@string/place_delete_button_cd"
         android:src="@drawable/outline_cancel_black_24" />
 

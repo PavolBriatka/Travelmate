@@ -3,6 +3,7 @@ package com.briatka.pavol.favouriteplaces.activities;
 import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -18,19 +19,27 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.briatka.pavol.favouriteplaces.R;
 import com.briatka.pavol.favouriteplaces.contentprovider.FavPlacesContract;
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
@@ -53,19 +62,27 @@ public class AddNewFavPlaceActivity extends AppCompatActivity {
     EditText nameEt;
     @BindView(R.id.map_current_position)
     MapView mapView;
+    @BindView(R.id.progress_bar)
+    ProgressBar progressBar;
 
     private String tempFilePath;
     private Bitmap bitmapPicture;
     private FusedLocationProviderClient locationProviderClient;
     private byte[] imgByteArray = null;
     private GoogleMap googleMap;
-    private Location lastKnownLocation;
     private int permissionCheck;
     private double latitude;
     private double longitude;
 
     private static final String FILE_PROVIDER_AUTHORITY = "com.briatka.pavol.fileprovider";
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 2;
+
+    private LocationRequest locationRequest;
+    protected static final int REQUEST_CHECK_SETTINGS = 0x1;
+
+    private LocationCallback mLocationCallback;
+
+    private int updateCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +91,60 @@ public class AddNewFavPlaceActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        createLocationRequest();
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                updateCounter += 1;
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    float defaultZoom = 15;
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                            new LatLng(latitude,
+                                    longitude), defaultZoom
+                    ));
+
+                }
+
+                if(updateCounter == 3){
+                    progressBar.setVisibility(View.GONE);
+                }
+            }
+        };
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+
+        SettingsClient client = LocationServices.getSettingsClient(this);
+        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
+
+        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+            @Override
+            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                startLocationUpdates();
+            }
+        });
+
+        task.addOnFailureListener(this, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                if (e instanceof ResolvableApiException) {
+                    try {
+                        ResolvableApiException resolvable = (ResolvableApiException) e;
+                        resolvable.startResolutionForResult(AddNewFavPlaceActivity.this,
+                                REQUEST_CHECK_SETTINGS);
+                    } catch (IntentSender.SendIntentException sendEx) {
+
+                    }
+                }
+            }
+        });
 
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,10 +215,21 @@ public class AddNewFavPlaceActivity extends AppCompatActivity {
                     googleMap.getUiSettings().setMyLocationButtonEnabled(false);
                 }
 
-                getLocation();
-
             }
         });
+    }
+
+
+    private void startLocationUpdates() {
+        permissionCheck = ContextCompat.checkSelfPermission(AddNewFavPlaceActivity.this,
+                Manifest.permission.ACCESS_FINE_LOCATION);
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            locationProviderClient.requestLocationUpdates(locationRequest, mLocationCallback, null);
+        }
+    }
+
+    private void stopLocationUpdates() {
+        locationProviderClient.removeLocationUpdates(mLocationCallback);
     }
 
     private void takePicture() {
@@ -180,6 +262,17 @@ public class AddNewFavPlaceActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             processImage();
+        } else if (requestCode == REQUEST_CHECK_SETTINGS && resultCode == RESULT_OK) {
+            progressBar.setVisibility(View.VISIBLE);
+            Toast.makeText(AddNewFavPlaceActivity.this,
+                    getString(R.string.targeting_device_toast),
+                    Toast.LENGTH_SHORT).show();
+            startLocationUpdates();
+
+        } else if (requestCode == REQUEST_CHECK_SETTINGS && resultCode == RESULT_CANCELED) {
+            Toast.makeText(AddNewFavPlaceActivity.this,
+                    getString(R.string.gps_denied_toast),
+                    Toast.LENGTH_LONG).show();
         }
     }
 
@@ -195,33 +288,6 @@ public class AddNewFavPlaceActivity extends AppCompatActivity {
 
         placePhoto.setImageBitmap(resized);
 
-
-    }
-
-    private void getLocation() {
-        int permissionCheck = ContextCompat.checkSelfPermission(AddNewFavPlaceActivity.this,
-                Manifest.permission.ACCESS_FINE_LOCATION);
-
-        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-
-            Task locationResult = locationProviderClient.getLastLocation()
-                    .addOnCompleteListener(this, new OnCompleteListener<Location>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Location> task) {
-                            if (task.isSuccessful()) {
-                                float defaultZoom = 15;
-                                lastKnownLocation = task.getResult();
-                                latitude = lastKnownLocation.getLatitude();
-                                longitude = lastKnownLocation.getLongitude();
-                                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                        new LatLng(latitude,
-                                                longitude), defaultZoom
-                                ));
-                            }
-                        }
-                    });
-
-        }
     }
 
     private void bitmapToByteArray(Bitmap bitmapImg) {
@@ -256,6 +322,8 @@ public class AddNewFavPlaceActivity extends AppCompatActivity {
             PhotoUtils.deleteFile(this, tempFilePath);
         }
 
+        stopLocationUpdates();
+
         finish();
     }
 
@@ -269,6 +337,7 @@ public class AddNewFavPlaceActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         mapView.onPause();
+        stopLocationUpdates();
     }
 
     @Override
@@ -282,5 +351,14 @@ public class AddNewFavPlaceActivity extends AppCompatActivity {
         super.onLowMemory();
         mapView.onLowMemory();
     }
+
+    protected void createLocationRequest() {
+        locationRequest = new LocationRequest();
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(2000);
+        locationRequest.setNumUpdates(3);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
 
 }

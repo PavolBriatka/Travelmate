@@ -7,15 +7,15 @@
     <string name="save_place_empty_name_view">Please, enter a custom name for this place.</string>
     <string name="no_picture_to_show">There is no photo to show.</string>
 
-    <string name="add_new_place_fab">Add new place button</string>
+    <string name="add_new_place_fab">Add new place</string>
     <string name="place_photo_thumbnail_cd">Place photo thumbnail</string>
-    <string name="take_photo_icon_cd">Take picture button</string>
-    <string name="save_place_icon_cd">Save place button</string>
+    <string name="take_photo_icon_cd">Take picture</string>
+    <string name="save_place_icon_cd">Save place</string>
     <string name="place_detail_photo_cd">Place detail photo</string>
     <string name="ferris_wheel_decoration_cd">Ferris wheel decoration image</string>
     <string name="place_detail_fullscreen_image_cd">Place photo fullscreen</string>
-    <string name="share_location_icon_cd">Share location button</string>
-    <string name="show_fullscreen_icon_cd">Show fullscreen button</string>
+    <string name="share_location_icon_cd">Share location</string>
+    <string name="show_fullscreen_icon_cd">Show fullscreen</string>
 
     <string name="take_photo_tv">Take a picture</string>
     <string name="save_location_tv">Save the location</string>
@@ -41,11 +41,11 @@
 
 
     <string name="trip_list_check_box_cd">Trip detail destination check box</string>
-    <string name="trip_cancel_button_cd">Cancel trip button</string>
-    <string name="place_delete_button_cd">Delete place button</string>
+    <string name="trip_cancel_button_cd">Cancel trip</string>
+    <string name="place_delete_button_cd">Delete place</string>
     <string name="add_new_trip_background_cd">Add new trip background picture</string>
-    <string name="save_new_trip_fab_cd">Save the trip button</string>
-    <string name="add_new_trip_fab">Add new trip button</string>
+    <string name="save_new_trip_fab_cd">Save the trip</string>
+    <string name="add_new_trip_fab">Add new trip</string>
     <string name="trip_detail_background_cd">Trip detail background picture</string>
     <string name="main_activity_background_cd">Main activity background picture</string>
 
@@ -83,4 +83,7 @@
 
     <string name="tab_one_text">Planned Trips</string>
     <string name="tab_two_text">Favourite Locations</string>
+
+    <string name="gps_denied_toast">Unable to locate the user. Please, turn the GPS on.</string>
+    <string name="targeting_device_toast">Verifying user\'s location&#8230;</string>
 </resources>

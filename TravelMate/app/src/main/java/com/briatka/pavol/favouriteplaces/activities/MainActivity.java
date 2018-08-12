@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements FavPlacesCursorAd
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.viewpager)
@@ -55,8 +56,9 @@ public class MainActivity extends AppCompatActivity implements FavPlacesCursorAd
 
         tabLayout.setupWithViewPager(viewPager);
 
-
     }
+
+
 
     @Override
     public void onFavPlaceItemClicked(int id) {
@@ -99,5 +101,7 @@ public class MainActivity extends AppCompatActivity implements FavPlacesCursorAd
             // permissions this app might request
         }
     }
+
+
 
 }
