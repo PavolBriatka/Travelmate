@@ -65,7 +65,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCD4nO8Kq_PKulCeyOVkpx9p7dGixxAAoo" />
+            android:value="{Your API key}" />
 
         <activity
             android:name=".activities.AddNewTripActivity"
@@ -107,4 +107,9 @@
         <service android:name=".tripintentservice.TripIntentService" />
     </application>
 
+<<<<<<< HEAD
 </manifest>
+=======
+    
+</manifest>
+>>>>>>> b73a46398b3038aa990a735c49cbe89438a8224d

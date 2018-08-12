@@ -1,4 +1,4 @@
-<h1>Travelmate</h1>
+<h1>TravelMate</h1>
 <p><b>Keywords:</b> Content provider, SQLite database, Cursor Loader, Maps SDK for Android, Places SDK for Android, Location API, Gson library, widget API, Intent service, RemoteViewsFactory, Camera intent, picture resampling, CoordinatorLayout, AppBarLayout, RecyclerView, ViewPager, FragmentAdapter</p>
 <p>This application was created as a final project for the Udacity Andorid nanodegree course. It offers the user two main features:</p>
 <ol>
