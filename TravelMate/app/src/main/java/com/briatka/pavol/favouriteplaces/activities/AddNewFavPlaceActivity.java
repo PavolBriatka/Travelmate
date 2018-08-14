@@ -1,7 +1,6 @@
 package com.briatka.pavol.favouriteplaces.activities;
 
 import android.Manifest;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -23,7 +22,9 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.briatka.pavol.favouriteplaces.R;
-import com.briatka.pavol.favouriteplaces.contentprovider.FavPlacesContract;
+import com.briatka.pavol.favouriteplaces.customobjects.FavPlaceObject;
+import com.briatka.pavol.favouriteplaces.executors.AppExecutors;
+import com.briatka.pavol.favouriteplaces.roomdatabase.TravelMateDatabase;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -82,6 +83,8 @@ public class AddNewFavPlaceActivity extends AppCompatActivity {
 
     private LocationCallback mLocationCallback;
 
+    private TravelMateDatabase mDatabase;
+
     private int updateCounter = 0;
 
     @Override
@@ -89,6 +92,8 @@ public class AddNewFavPlaceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_place);
         ButterKnife.bind(this);
+
+        mDatabase = TravelMateDatabase.getInstance(getApplicationContext());
 
         locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -305,24 +310,25 @@ public class AddNewFavPlaceActivity extends AppCompatActivity {
         String title = nameEt.getText().toString();
         String coordinates = Double.toString(latitude) + "," + Double.toString(longitude);
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(FavPlacesContract.FavPlacesEntry.PLACE_NAME, title);
-        contentValues.put(FavPlacesContract.FavPlacesEntry.PLACE_COORDINATES, coordinates);
-        contentValues.put(FavPlacesContract.FavPlacesEntry.PLACE_PHOTO, imgByteArray);
+        final FavPlaceObject newPlace = new FavPlaceObject(title, coordinates, imgByteArray);
+        AppExecutors.getsInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mDatabase.favPlaceDao().insertPlace(newPlace);
+            }
+        });
 
-        Uri uri = getContentResolver().insert(FavPlacesContract.FavPlacesEntry.PLACES_CONTENT_URI, contentValues);
 
-        if (uri != null) {
-            Toast.makeText(getBaseContext(),
-                    getBaseContext().getResources().getString(R.string.new_fav_place_added),
-                    Toast.LENGTH_SHORT).show();
-        }
 
         if (bitmapPicture != null) {
             PhotoUtils.deleteFile(this, tempFilePath);
         }
 
         stopLocationUpdates();
+
+        Toast.makeText(getBaseContext(),
+                getBaseContext().getResources().getString(R.string.new_fav_place_added),
+                Toast.LENGTH_SHORT).show();
 
         finish();
     }

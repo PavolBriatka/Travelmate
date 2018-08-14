@@ -2,10 +2,8 @@ package com.briatka.pavol.favouriteplaces.adapters;
 
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -16,8 +14,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.briatka.pavol.favouriteplaces.R;
-import com.briatka.pavol.favouriteplaces.contentprovider.FavPlacesContract;
 import com.briatka.pavol.favouriteplaces.customobjects.CustomPlace;
+import com.briatka.pavol.favouriteplaces.customobjects.TripObject;
+import com.briatka.pavol.favouriteplaces.executors.AppExecutors;
+import com.briatka.pavol.favouriteplaces.roomdatabase.TravelMateDatabase;
 import com.briatka.pavol.favouriteplaces.widget.TripWidgetProvider;
 import com.google.gson.Gson;
 
@@ -31,11 +31,16 @@ public class TripListAdapter extends RecyclerView.Adapter<TripListAdapter.ViewHo
     private ArrayList<CustomPlace> mPlaceList;
     private Context mContext;
     private String mTripId;
+    private String mTripName;
+    private int intTripId;
+
+    private TravelMateDatabase mDatabase;
 
 
     public TripListAdapter(Context context, ArrayList<CustomPlace> placeList) {
         this.mContext = context;
         this.mPlaceList = placeList;
+        this.mDatabase = TravelMateDatabase.getInstance(context);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -109,6 +114,8 @@ public class TripListAdapter extends RecyclerView.Adapter<TripListAdapter.ViewHo
         mTripId = passedTripId;
     }
 
+    public void setTripName(String passedTripName) {mTripName = passedTripName;}
+
     private void onClickUpdate(ArrayList<CustomPlace> updatedList) {
         Gson gson = new Gson();
         String newData = gson.toJson(updatedList);
@@ -116,9 +123,7 @@ public class TripListAdapter extends RecyclerView.Adapter<TripListAdapter.ViewHo
         updatePreferences(newData);
         updateTripDatabase(newData);
 
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(mContext, TripWidgetProvider.class));
-        TripWidgetProvider.updateTripWidget(mContext, appWidgetManager, appWidgetIds);
+
     }
 
     private void updatePreferences(String newData) {
@@ -129,16 +134,21 @@ public class TripListAdapter extends RecyclerView.Adapter<TripListAdapter.ViewHo
     }
 
     private void updateTripDatabase(String updatedData) {
-        Uri tripRowUri = FavPlacesContract.TripListsEntry.TRIPS_CONTENT_URI;
-        tripRowUri = tripRowUri.buildUpon().appendPath(mTripId).build();
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(FavPlacesContract.TripListsEntry.TRIP_LIST_JSON, updatedData);
+        final TripObject objectUpdate = new TripObject(mTripName, updatedData);
 
-        mContext.getContentResolver().update(tripRowUri,
-                contentValues,
-                null,
-                null);
+        AppExecutors.getsInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                intTripId = Integer.parseInt(mTripId);
+                objectUpdate.setId(intTripId);
+                mDatabase.tripDao().updateTrip(objectUpdate);
+
+                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(mContext);
+                int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(mContext, TripWidgetProvider.class));
+                TripWidgetProvider.updateTripWidget(mContext, appWidgetManager, appWidgetIds);
+            }
+        });
 
     }
 }

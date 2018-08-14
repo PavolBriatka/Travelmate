@@ -3,10 +3,10 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         config {
-            keyAlias 'Pavol_Briatka_Signature'
-            keyPassword 'EC142812'
+            keyAlias '{alias}'
+            keyPassword '{password}'
             storeFile file("$rootDir/keystore.jks")
-            storePassword 'EC1428128327'
+            storePassword '{password}'
         }
     }
     compileSdkVersion 27
@@ -14,7 +14,7 @@ android {
         applicationId "com.briatka.pavol.favouriteplaces"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 3
+        versionCode 4
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -47,4 +47,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services-places:15.0.1'
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    implementation 'android.arch.persistence.room:runtime:1.1.1'
+    annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
+
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
+    annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
 }

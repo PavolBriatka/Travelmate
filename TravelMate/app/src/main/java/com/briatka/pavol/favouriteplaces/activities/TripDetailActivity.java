@@ -1,14 +1,14 @@
 package com.briatka.pavol.favouriteplaces.activities;
 
 import android.appwidget.AppWidgetManager;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,8 +24,12 @@ import android.widget.Toast;
 
 import com.briatka.pavol.favouriteplaces.R;
 import com.briatka.pavol.favouriteplaces.adapters.TripListAdapter;
-import com.briatka.pavol.favouriteplaces.contentprovider.FavPlacesContract;
 import com.briatka.pavol.favouriteplaces.customobjects.CustomPlace;
+import com.briatka.pavol.favouriteplaces.customobjects.TripObject;
+import com.briatka.pavol.favouriteplaces.executors.AppExecutors;
+import com.briatka.pavol.favouriteplaces.roomdatabase.TravelMateDatabase;
+import com.briatka.pavol.favouriteplaces.viewmodels.TripDetailViewModel;
+import com.briatka.pavol.favouriteplaces.viewmodels.TripDetailViewModelFactory;
 import com.briatka.pavol.favouriteplaces.widget.TripWidgetProvider;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -44,6 +48,8 @@ import butterknife.ButterKnife;
 public class TripDetailActivity extends AppCompatActivity {
 
     public static final String TRIP_ID = "trip_id";
+
+    private static final int TRIP_ID_DEFAULT_VALUE = -1;
     @BindView(R.id.detail_trip_recycler_view)
     RecyclerView recyclerView;
 
@@ -61,16 +67,15 @@ public class TripDetailActivity extends AppCompatActivity {
     @BindView(R.id.change_name_edit_text)
     EditText changeNameEditText;
 
+    private TravelMateDatabase mDatabase;
+
     private String tripId;
-    private Cursor tripCursor;
     private ArrayList<CustomPlace> tripList = new ArrayList<>();
     private ArrayList<CustomPlace> tripChanges = new ArrayList<>();
     private String tripData;
     private String tripName;
     private TripListAdapter adapter;
 
-
-    private Uri tripPathUri;
     private int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
 
     @Override
@@ -79,16 +84,19 @@ public class TripDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_trip_detail);
         ButterKnife.bind(this);
 
-        Intent passedData = getIntent();
-        tripId = passedData.getStringExtra(TRIP_ID);
+        mDatabase = TravelMateDatabase.getInstance(getApplicationContext());
 
-        showOnMapButton.setOnClickListener(new View.OnClickListener() {
+        Intent passedData = getIntent();
+        int id = passedData.getIntExtra(TRIP_ID, TRIP_ID_DEFAULT_VALUE);
+        tripId = String.valueOf(id);
+
+        TripDetailViewModelFactory factory = new TripDetailViewModelFactory(mDatabase, id);
+        final TripDetailViewModel viewModel =
+                ViewModelProviders.of(this,factory).get(TripDetailViewModel.class);
+        viewModel.getTrip().observe(this, new Observer<TripObject>() {
             @Override
-            public void onClick(View view) {
-                Intent openMap = new Intent(getApplicationContext(), TripOnMapActivity.class);
-                openMap.putExtra(TripOnMapActivity.MAP_COORDINATES_KEY, tripData);
-                openMap.putExtra(TripOnMapActivity.TRIP_NAME_KEY, tripName);
-                startActivity(openMap);
+            public void onChanged(@Nullable TripObject tripObject) {
+                populateUI(tripObject);
             }
         });
 
@@ -146,50 +154,40 @@ public class TripDetailActivity extends AppCompatActivity {
                 updateTrip();
             }
         });
-
-        Uri basicUri = FavPlacesContract.TripListsEntry.TRIPS_CONTENT_URI;
-        basicUri = basicUri.buildUpon().appendPath(tripId).build();
-
-        tripPathUri = basicUri;
-
-        tripCursor = getContentResolver().query(
-                tripPathUri,
-                null,
-                null,
-                null,
-                null);
-
-
-        tripCursor.moveToFirst();
-        getTripFromDatabase(tripCursor);
-
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, TripWidgetProvider.class));
-        TripWidgetProvider.updateTripWidget(this, appWidgetManager, appWidgetIds);
-
     }
 
-    private void getTripFromDatabase(Cursor cursor) {
-        int nameIndex = cursor.getColumnIndex(FavPlacesContract.TripListsEntry.TRIP_NAME);
-        int dataIndex = cursor.getColumnIndex(FavPlacesContract.TripListsEntry.TRIP_LIST_JSON);
 
-        //get values
-        tripName = cursor.getString(nameIndex);
-        tripData = cursor.getString(dataIndex);
+    private void populateUI(TripObject tripObject){
+        tripName = tripObject.getTitle();
+        tripData = tripObject.getDestinationData();
 
         Type type = new TypeToken<ArrayList<CustomPlace>>() {
         }.getType();
         Gson gson = new Gson();
         tripList = gson.fromJson(tripData, type);
 
-        //set values
         adapter.setTripListData(tripList);
         adapter.setTripId(tripId);
+        adapter.setTripName(tripName);
         recyclerView.setAdapter(adapter);
 
         setTitle(tripName);
 
+        showOnMapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent openMap = new Intent(getApplicationContext(), TripOnMapActivity.class);
+                openMap.putExtra(TripOnMapActivity.MAP_COORDINATES_KEY, tripData);
+                openMap.putExtra(TripOnMapActivity.TRIP_NAME_KEY, tripName);
+                startActivity(openMap);
+            }
+        });
+
         saveToPreferences();
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, TripWidgetProvider.class));
+        TripWidgetProvider.updateTripWidget(this, appWidgetManager, appWidgetIds);
     }
 
     private void saveToPreferences() {
@@ -207,24 +205,17 @@ public class TripDetailActivity extends AppCompatActivity {
                     getString(R.string.edit_trip_empty_save_array),
                     Toast.LENGTH_SHORT).show();
         } else {
-            ContentValues contentValues = new ContentValues();
             Gson gson = new Gson();
+            final int id = Integer.parseInt(tripId);
             tripData = gson.toJson(tripList);
-            Uri basicUri = FavPlacesContract.TripListsEntry.TRIPS_CONTENT_URI;
-            basicUri = basicUri.buildUpon().appendPath(tripId).build();
-
-            contentValues.put(FavPlacesContract.TripListsEntry.TRIP_LIST_JSON, tripData);
-
-            getContentResolver().update(basicUri,
-                    contentValues,
-                    null,
-                    null);
-
-            saveToPreferences();
-
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, TripWidgetProvider.class));
-            TripWidgetProvider.updateTripWidget(this, appWidgetManager, appWidgetIds);
+            final TripObject updatedObject = new TripObject(tripName, tripData);
+            AppExecutors.getsInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    updatedObject.setId(id);
+                    mDatabase.tripDao().updateTrip(updatedObject);
+                }
+            });
 
             Toast.makeText(TripDetailActivity.this,
                     getString(R.string.changes_saved_msg),
@@ -234,38 +225,29 @@ public class TripDetailActivity extends AppCompatActivity {
     }
 
     private void updateTripName() {
-        ContentValues contentValues = new ContentValues();
-        Uri itemToUpdate = FavPlacesContract.TripListsEntry.TRIPS_CONTENT_URI;
-        itemToUpdate = itemToUpdate.buildUpon().appendPath(tripId).build();
-
-        contentValues.put(FavPlacesContract.TripListsEntry.TRIP_NAME, tripName);
-
-        getContentResolver().update(itemToUpdate,
-                contentValues,
-                null,
-                null);
-
-        saveToPreferences();
-
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, TripWidgetProvider.class));
-        TripWidgetProvider.updateTripWidget(this, appWidgetManager, appWidgetIds);
-
+        final int id = Integer.parseInt(tripId);
+        final TripObject updatedObject = new TripObject(tripName,tripData);
+        AppExecutors.getsInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                updatedObject.setId(id);
+                mDatabase.tripDao().updateTrip(updatedObject);
+            }
+        });
     }
 
     private void newDestinationUpdate() {
-        ContentValues contentValues = new ContentValues();
+        final int id = Integer.parseInt(tripId);
         Gson gson = new Gson();
         tripData = gson.toJson(tripList);
-        Uri itemToUpdate = FavPlacesContract.TripListsEntry.TRIPS_CONTENT_URI;
-        itemToUpdate = itemToUpdate.buildUpon().appendPath(tripId).build();
-
-        contentValues.put(FavPlacesContract.TripListsEntry.TRIP_LIST_JSON, tripData);
-
-        getContentResolver().update(itemToUpdate,
-                contentValues,
-                null,
-                null);
+        final TripObject updatedObject = new TripObject(tripName,tripData);
+        AppExecutors.getsInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                updatedObject.setId(id);
+                mDatabase.tripDao().updateTrip(updatedObject);
+            }
+        });
     }
 
     private void stepBack() {
@@ -351,16 +333,6 @@ public class TripDetailActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        tripCursor = getContentResolver().query(
-                tripPathUri,
-                null,
-                null,
-                null,
-                null);
-
-        tripCursor.moveToFirst();
-        getTripFromDatabase(tripCursor);
-
     }
 }
 

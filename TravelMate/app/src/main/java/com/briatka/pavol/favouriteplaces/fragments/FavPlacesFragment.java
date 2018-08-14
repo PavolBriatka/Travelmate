@@ -1,18 +1,14 @@
 package com.briatka.pavol.favouriteplaces.fragments;
 
 
-import android.content.Context;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,10 +18,15 @@ import android.widget.TextView;
 
 import com.briatka.pavol.favouriteplaces.R;
 import com.briatka.pavol.favouriteplaces.activities.AddNewFavPlaceActivity;
-import com.briatka.pavol.favouriteplaces.adapters.FavPlacesCursorAdapter;
-import com.briatka.pavol.favouriteplaces.contentprovider.FavPlacesContract;
+import com.briatka.pavol.favouriteplaces.adapters.FavPlacesAdapter;
+import com.briatka.pavol.favouriteplaces.customobjects.FavPlaceObject;
+import com.briatka.pavol.favouriteplaces.executors.AppExecutors;
 import com.briatka.pavol.favouriteplaces.interfaces.DeleteItemListener;
+import com.briatka.pavol.favouriteplaces.roomdatabase.TravelMateDatabase;
+import com.briatka.pavol.favouriteplaces.viewmodels.PlaceMainViewModel;
 import com.github.ybq.android.spinkit.SpinKitView;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,11 +34,11 @@ import butterknife.ButterKnife;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FavPlacesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class FavPlacesFragment extends Fragment {
 
-    private static final int LOADER_ID = 0;
-    private FavPlacesCursorAdapter adapter;
-    final LoaderManager.LoaderCallbacks callbacks = this;
+    private FavPlacesAdapter adapter;
+
+    private TravelMateDatabase mDatabase;
 
 
     @BindView(R.id.fav_places_recycler_view)
@@ -57,14 +58,16 @@ public class FavPlacesFragment extends Fragment implements LoaderManager.LoaderC
     public class DeletePlace implements DeleteItemListener {
 
         @Override
-        public void onDeleteButtonClicked(String tag) {
+        public void onDeleteButtonClicked(final int tag) {
 
-            Uri deletePlacePath = FavPlacesContract.FavPlacesEntry.PLACES_CONTENT_URI;
-            deletePlacePath = deletePlacePath.buildUpon().appendPath(tag).build();
+            AppExecutors.getsInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    List<FavPlaceObject> places = adapter.getPlacesArray();
+                    mDatabase.favPlaceDao().deletePlace(places.get(tag));
+                }
+            });
 
-            getContext().getContentResolver().delete(deletePlacePath, null, null);
-
-            getLoaderManager().restartLoader(LOADER_ID, null, callbacks);
         }
     }
 
@@ -76,11 +79,11 @@ public class FavPlacesFragment extends Fragment implements LoaderManager.LoaderC
         View rootView = inflater.inflate(R.layout.fragment_fav_places, container, false);
         ButterKnife.bind(this, rootView);
 
-        getLoaderManager().initLoader(LOADER_ID, null, this);
+        mDatabase = TravelMateDatabase.getInstance(getContext());
 
         LinearLayoutManager manager = new LinearLayoutManager(getContext(),
                 LinearLayoutManager.VERTICAL, false);
-        adapter = new FavPlacesCursorAdapter(getContext(), new DeletePlace());
+        adapter = new FavPlacesAdapter(getContext(), new DeletePlace());
 
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
@@ -94,74 +97,28 @@ public class FavPlacesFragment extends Fragment implements LoaderManager.LoaderC
             }
         });
 
+        setupViewModel();
+
         return rootView;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        getLoaderManager().restartLoader(LOADER_ID, null, this);
-    }
 
-    @NonNull
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        return new AsyncTaskLoader<Cursor>(getContext()) {
 
-            Cursor receivedData = null;
-
+    private void setupViewModel() {
+        PlaceMainViewModel viewModel = ViewModelProviders.of(this).get(PlaceMainViewModel.class);
+        final LiveData<List<FavPlaceObject>> placeList = viewModel.getPlaceList();
+        placeList.observe(this, new Observer<List<FavPlaceObject>>() {
             @Override
-            protected void onStartLoading() {
-                if (receivedData != null) {
-                    deliverResult(receivedData);
+            public void onChanged(@Nullable List<FavPlaceObject> favPlaceObjects) {
+                adapter.setPlaces(favPlaceObjects);
+                if (placeList == null || favPlaceObjects.size() == 0) {
+                    emptyPlaceList.setVisibility(View.VISIBLE);
                 } else {
-                    forceLoad();
+                    emptyPlaceList.setVisibility(View.GONE);
                 }
+                progressBar.setVisibility(View.GONE);
             }
-
-            @Nullable
-            @Override
-            public Cursor loadInBackground() {
-                try {
-                    Context appContext = getActivity().getApplicationContext();
-                    Uri uri = FavPlacesContract.FavPlacesEntry.PLACES_CONTENT_URI;
-
-                    return appContext.getContentResolver().query(uri,
-                            null,
-                            null,
-                            null,
-                            null);
-
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                    return null;
-                }
-            }
-
-            public void deliverResult(Cursor data) {
-                receivedData = data;
-                super.deliverResult(data);
-            }
-        };
-    }
-
-    @Override
-    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        if (data == null || data.getCount() == 0) {
-            emptyPlaceList.setVisibility(View.VISIBLE);
-        } else {
-            emptyPlaceList.setVisibility(View.GONE);
-        }
-        adapter.swapCursor(data);
-        progressBar.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-        adapter.swapCursor(null);
+        });
 
     }
-
-
-
 }

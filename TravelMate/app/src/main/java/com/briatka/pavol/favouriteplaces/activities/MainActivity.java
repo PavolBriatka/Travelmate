@@ -13,15 +13,15 @@ import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.briatka.pavol.favouriteplaces.R;
-import com.briatka.pavol.favouriteplaces.adapters.FavPlacesCursorAdapter;
+import com.briatka.pavol.favouriteplaces.adapters.FavPlacesAdapter;
 import com.briatka.pavol.favouriteplaces.adapters.FragmentAdapter;
-import com.briatka.pavol.favouriteplaces.adapters.TripListCursorAdapter;
+import com.briatka.pavol.favouriteplaces.adapters.TripListMainAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements FavPlacesCursorAdapter.OnFavPlaceItemClickListener,
-        TripListCursorAdapter.OnTripListItemClickListener {
+public class MainActivity extends AppCompatActivity implements FavPlacesAdapter.OnFavPlaceItemClickListener,
+        TripListMainAdapter.OnTripListItemClickListener {
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
@@ -62,18 +62,15 @@ public class MainActivity extends AppCompatActivity implements FavPlacesCursorAd
 
     @Override
     public void onFavPlaceItemClicked(int id) {
-        String placeId = Integer.toString(id);
         Intent openDetailActivity = new Intent(getBaseContext(), FavPlaceDetailActivity.class);
-        openDetailActivity.putExtra(FavPlaceDetailActivity.ID_KEY, placeId);
+        openDetailActivity.putExtra(FavPlaceDetailActivity.ID_KEY, id);
         startActivity(openDetailActivity);
     }
 
     @Override
     public void onTripListItemClicked(int id) {
-
-        String tripId = Integer.toString(id);
         Intent openTripDetail = new Intent(getBaseContext(), TripDetailActivity.class);
-        openTripDetail.putExtra(TripDetailActivity.TRIP_ID, tripId);
+        openTripDetail.putExtra(TripDetailActivity.TRIP_ID, id);
         startActivity(openTripDetail);
     }
 

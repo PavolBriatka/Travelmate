@@ -39,10 +39,6 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <provider
-            android:name=".contentprovider.FPContentProvider"
-            android:authorities="com.briatka.pavol.favouriteplaces"
-            android:exported="false" />
 
         <activity
             android:name=".activities.AddNewFavPlaceActivity"
@@ -65,7 +61,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="{Your API key}" />
+            android:value="{your API key}" />
 
         <activity
             android:name=".activities.AddNewTripActivity"
@@ -107,9 +103,4 @@
         <service android:name=".tripintentservice.TripIntentService" />
     </application>
 
-<<<<<<< HEAD
 </manifest>
-=======
-    
-</manifest>
->>>>>>> b73a46398b3038aa990a735c49cbe89438a8224d

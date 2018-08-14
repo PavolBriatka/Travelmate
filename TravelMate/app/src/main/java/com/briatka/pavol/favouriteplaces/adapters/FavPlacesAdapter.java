@@ -12,16 +12,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.briatka.pavol.favouriteplaces.R;
-import com.briatka.pavol.favouriteplaces.contentprovider.FavPlacesContract;
+import com.briatka.pavol.favouriteplaces.customobjects.FavPlaceObject;
 import com.briatka.pavol.favouriteplaces.interfaces.DeleteItemListener;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class FavPlacesCursorAdapter extends RecyclerView.Adapter<FavPlacesCursorAdapter.ViewHolder> {
+public class FavPlacesAdapter extends RecyclerView.Adapter<FavPlacesAdapter.ViewHolder> {
 
     private Cursor mCursor;
     private Context mContext;
+
+    private List<FavPlaceObject> mPlacesArray;
 
     private OnFavPlaceItemClickListener clickListener;
     private DeleteItemListener deletePlaceListener;
@@ -30,7 +34,7 @@ public class FavPlacesCursorAdapter extends RecyclerView.Adapter<FavPlacesCursor
         void onFavPlaceItemClicked(int id);
     }
 
-    public FavPlacesCursorAdapter(Context context, DeleteItemListener deletePlace) {
+    public FavPlacesAdapter(Context context, DeleteItemListener deletePlace) {
         this.mContext = context;
         this.clickListener = (OnFavPlaceItemClickListener) context;
         this.deletePlaceListener = deletePlace;
@@ -53,22 +57,19 @@ public class FavPlacesCursorAdapter extends RecyclerView.Adapter<FavPlacesCursor
 
     @NonNull
     @Override
-    public FavPlacesCursorAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public FavPlacesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         this.mContext = parent.getContext();
         return new ViewHolder(LayoutInflater.from(mContext)
                 .inflate(R.layout.favplaces_list_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final FavPlacesCursorAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final FavPlacesAdapter.ViewHolder holder, int position) {
 
-        int idIndex = mCursor.getColumnIndex(FavPlacesContract.FavPlacesEntry._ID);
-        int nameIndex = mCursor.getColumnIndex(FavPlacesContract.FavPlacesEntry.PLACE_NAME);
 
-        mCursor.moveToPosition(position);
-
-        int id = mCursor.getInt(idIndex);
-        String name = mCursor.getString(nameIndex);
+        FavPlaceObject currentObject = mPlacesArray.get(position);
+        String name = currentObject.getTitle();
+        int id = currentObject.getId();
 
         holder.itemView.setTag(id);
         holder.pTitle.setText(name);
@@ -92,8 +93,7 @@ public class FavPlacesCursorAdapter extends RecyclerView.Adapter<FavPlacesCursor
         holder.deletePlace.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                String tag = holder.itemView.getTag().toString();
-                deletePlaceListener.onDeleteButtonClicked(tag);
+                deletePlaceListener.onDeleteButtonClicked(holder.getAdapterPosition());
                 return true;
             }
         });
@@ -102,24 +102,19 @@ public class FavPlacesCursorAdapter extends RecyclerView.Adapter<FavPlacesCursor
 
     @Override
     public int getItemCount() {
-        if (mCursor == null) {
+        if (mPlacesArray == null) {
             return 0;
         }
-        return mCursor.getCount();
+        return mPlacesArray.size();
     }
 
-    public Cursor swapCursor(Cursor newCursor) {
 
-        if (mCursor == newCursor) {
-            return null;
-        }
+    public void setPlaces(List<FavPlaceObject> placesArray){
+        mPlacesArray = placesArray;
+        notifyDataSetChanged();
+    }
 
-        Cursor temp = mCursor;
-        this.mCursor = newCursor;
-
-        if (newCursor != null) {
-            this.notifyDataSetChanged();
-        }
-        return temp;
+    public List<FavPlaceObject> getPlacesArray(){
+        return mPlacesArray;
     }
 }

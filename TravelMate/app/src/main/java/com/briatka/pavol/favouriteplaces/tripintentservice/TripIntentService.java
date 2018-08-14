@@ -3,17 +3,17 @@ package com.briatka.pavol.favouriteplaces.tripintentservice;
 import android.app.IntentService;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 import com.briatka.pavol.favouriteplaces.R;
-import com.briatka.pavol.favouriteplaces.contentprovider.FavPlacesContract;
 import com.briatka.pavol.favouriteplaces.customobjects.CustomPlace;
+import com.briatka.pavol.favouriteplaces.customobjects.TripObject;
+import com.briatka.pavol.favouriteplaces.executors.AppExecutors;
+import com.briatka.pavol.favouriteplaces.roomdatabase.TravelMateDatabase;
 import com.briatka.pavol.favouriteplaces.widget.TripWidgetProvider;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -28,6 +28,9 @@ public class TripIntentService extends IntentService {
     public static final String TRIP_ID_KEY = "trip_id";
     public static final String DESTINATION_POSITION_KEY = "destination_position";
     public static final String TRIP_DATA_KEY = "trip_data";
+    public static final String TRIP_NAME_KEY = "trip_name";
+
+    private TravelMateDatabase mDatabase;
 
     public TripIntentService() {
         super("TripIntentService");
@@ -41,18 +44,23 @@ public class TripIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+
+        mDatabase = TravelMateDatabase.getInstance(getApplicationContext());
+
         if (intent != null) {
             final String action = intent.getAction();
             String tripId = intent.getStringExtra(TRIP_ID_KEY);
             int destinationIndex = intent.getIntExtra(DESTINATION_POSITION_KEY, 0);
             String tripListData = intent.getStringExtra(TRIP_DATA_KEY);
+            String tripName = intent.getStringExtra(TRIP_NAME_KEY);
             if (ACTION_DESTINATION_VISIT.equals(action)) {
-                handleActionDestinationVisit(tripId, destinationIndex, tripListData);
+                handleActionDestinationVisit(tripId, destinationIndex, tripListData, tripName);
             }
         }
     }
 
-    private void handleActionDestinationVisit(String tripDbId, int destinationArrayIndex, String dataList) {
+    private void handleActionDestinationVisit(String tripDbId, int destinationArrayIndex,
+                                              String dataList, String tripName) {
         Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<CustomPlace>>() {
         }.getType();
@@ -73,7 +81,7 @@ public class TripIntentService extends IntentService {
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(getApplicationContext(), TripWidgetProvider.class));
         TripWidgetProvider.updateTripWidget(getApplicationContext(), appWidgetManager, appWidgetIds);
 
-        updateTripDatabase(tripDbId, newData);
+        updateTripDatabase(tripDbId, newData, tripName);
 
     }
 
@@ -84,17 +92,16 @@ public class TripIntentService extends IntentService {
         editor.apply();
     }
 
-    private void updateTripDatabase(String tripDbId, String updatedData) {
-        Uri tripRowUri = FavPlacesContract.TripListsEntry.TRIPS_CONTENT_URI;
-        tripRowUri = tripRowUri.buildUpon().appendPath(tripDbId).build();
+    private void updateTripDatabase( String tripDbId, String updatedData, String tripName) {
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(FavPlacesContract.TripListsEntry.TRIP_LIST_JSON, updatedData);
-
-        getApplicationContext().getContentResolver().update(tripRowUri,
-                contentValues,
-                null,
-                null);
-
+        final int id = Integer.parseInt(tripDbId);
+        final TripObject updatedObject = new TripObject(tripName, updatedData);
+        AppExecutors.getsInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                updatedObject.setId(id);
+                mDatabase.tripDao().updateTrip(updatedObject);
+            }
+        });
     }
 }

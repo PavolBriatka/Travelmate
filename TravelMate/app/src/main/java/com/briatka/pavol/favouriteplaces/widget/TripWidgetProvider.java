@@ -92,6 +92,7 @@ public class TripWidgetProvider extends AppWidgetProvider {
         Intent serviceIntent = new Intent(context, TripIntentService.class);
         serviceIntent.setAction(TripIntentService.ACTION_DESTINATION_VISIT);
         serviceIntent.putExtra(TripIntentService.TRIP_ID_KEY, tripId);
+        serviceIntent.putExtra(TripIntentService.TRIP_NAME_KEY, tripName);
         PendingIntent destinationVisitPendingIntent = PendingIntent.getService(context,
                 0,
                 serviceIntent,

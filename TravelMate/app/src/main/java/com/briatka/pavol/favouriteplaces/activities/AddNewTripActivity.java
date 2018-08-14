@@ -1,7 +1,5 @@
 package com.briatka.pavol.favouriteplaces.activities;
 
-import android.content.ContentValues;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -15,8 +13,10 @@ import android.widget.Toast;
 
 import com.briatka.pavol.favouriteplaces.R;
 import com.briatka.pavol.favouriteplaces.adapters.CreateTripAdapter;
-import com.briatka.pavol.favouriteplaces.contentprovider.FavPlacesContract;
 import com.briatka.pavol.favouriteplaces.customobjects.CustomPlace;
+import com.briatka.pavol.favouriteplaces.customobjects.TripObject;
+import com.briatka.pavol.favouriteplaces.executors.AppExecutors;
+import com.briatka.pavol.favouriteplaces.roomdatabase.TravelMateDatabase;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -42,11 +42,15 @@ public class AddNewTripActivity extends AppCompatActivity {
     private CreateTripAdapter adapter;
     private ArrayList<CustomPlace> placeArrayList = new ArrayList<>();
 
+    private TravelMateDatabase mDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_trip);
         ButterKnife.bind(this);
+
+        mDatabase = TravelMateDatabase.getInstance(getApplicationContext());
 
         tripListRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         adapter = new CreateTripAdapter(this, null);
@@ -118,15 +122,15 @@ public class AddNewTripActivity extends AppCompatActivity {
         String data = gson.toJson(placeArrayList);
         String tripName = tripNameEt.getText().toString();
 
+        final TripObject tripObject = new TripObject(tripName,data);
+        AppExecutors.getsInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mDatabase.tripDao().insertTrip(tripObject);
+            }
+        });
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(FavPlacesContract.TripListsEntry.TRIP_NAME, tripName);
-        contentValues.put(FavPlacesContract.TripListsEntry.TRIP_LIST_JSON, data);
 
-        Uri uri = getContentResolver().insert(FavPlacesContract.TripListsEntry.TRIPS_CONTENT_URI, contentValues);
-        if (uri != null) {
-            Toast.makeText(getBaseContext(), getString(R.string.create_trip_success_msg), Toast.LENGTH_SHORT).show();
-        }
         finish();
     }
 
