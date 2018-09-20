@@ -1,4 +1,5 @@
 <h1>TravelMate</h1>
+<p>Available in <a href="https://play.google.com/store/apps/details?id=com.briatka.pavol.favouriteplaces">Google Play Store</a></p>
 <p><b>Keywords:</b> Room library, LiveData, ViewModel, SQLite database, Maps SDK for Android, Places SDK for Android, Location API, Gson library, widget API, Intent service, RemoteViewsFactory, Camera intent, picture resampling, CoordinatorLayout, AppBarLayout, RecyclerView, ViewPager, FragmentAdapter</p>
 <p>This application was created as a final project for the Udacity Andorid nanodegree course. It offers the user two main features:</p>
 <ol>
